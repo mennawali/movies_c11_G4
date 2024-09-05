@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
     HomePage.routeName: (context) => HomePage(),
    },
    debugShowCheckedModeBanner: false,
+
   );
  }
 }
