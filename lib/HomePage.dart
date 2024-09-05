@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:movies_app_c11/Browse.dart';
+import 'package:movies_app_c11/WatchList.dart';
 import 'package:movies_app_c11/api_manager.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -162,14 +164,12 @@ class HomePage extends StatelessWidget {
                   ),
                   child: Stack(
                     children: [
-                      PageView.builder(
+                      CarouselSlider.builder(
                         itemCount: popularMovies.length,
-                        itemBuilder: (context, index) {
-                          String imageUrl =
-                              "https://image.tmdb.org/t/p/w500${popularMovies[index].backdropPath ?? ''}";
+                        itemBuilder: (context, index, realIndex) {
+                          String imageUrl = "https://image.tmdb.org/t/p/w500${popularMovies[index].backdropPath ?? ''}";
 
-                          return imageUrl.isNotEmpty &&
-                              popularMovies[index].backdropPath != null
+                          return imageUrl.isNotEmpty && popularMovies[index].backdropPath != null
                               ? ClipRRect(
                             borderRadius: BorderRadius.circular(8),
                             child: Image.network(
@@ -193,7 +193,16 @@ class HomePage extends StatelessWidget {
                             ),
                           );
                         },
+                        options: CarouselOptions(
+                          height: 300,
+                          autoPlay: true,
+                          autoPlayInterval: Duration(seconds: 3),
+                          autoPlayAnimationDuration: Duration(milliseconds: 300),
+                          enlargeCenterPage: true,
+                          viewportFraction: 1.0,
+                        ),
                       ),
+
                       Stack(
                         children: [
                           Icon(
@@ -475,67 +484,35 @@ class HomePage extends StatelessWidget {
           );
         },
       ),
-      bottomNavigationBar: Container(
-        color: Color(0xff1a1a1a),
+      bottomNavigationBar:Container(
+        color:Color(0xff1a1a1a) ,
         child: Row(
           children: [
             Spacer(),
-                  Tab(
-                    icon: Column(
-                      children: [
-                        Icon(Icons.home_rounded, color: Colors.yellow),
-                        Text('Home',
-                          style: TextStyle(
-                            color: Colors.yellow,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Spacer(),
-                  Tab(
-                    icon: Column(
-                      children: [
-                        Icon(Icons.search, color: Colors.white),
-                        Text('Search',
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Spacer(),
-                  Tab(
-                    icon: Column(
-                      children: [
-                        Icon(Icons.movie_creation_sharp, color:Colors.white),
-                        Text('Browse',
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Spacer(),
-                  Tab(
-                    icon: Column(
-                      children: [
-                        Icon(Icons.collections_bookmark, color:Colors.white),
-                        Text('WatchList',
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+            IconButton(
+                onPressed:() {
+                  Navigator.pushNamed(context,HomePage.routeName);
+                }, icon:Icon(Icons.home_sharp,
+              color: Colors.white,
+            )),
             Spacer(),
-                ],
-              ),
-            ),
+            IconButton(onPressed:() {
+              Navigator.pushNamed(context, '');
+            }, icon:Icon(Icons.search,color:Colors.white)),
+            Spacer(),
+            IconButton(onPressed:() {
+              Navigator.pushNamed(context,Browse.routeName);
+            }, icon:Icon(Icons.movie_creation,color:Colors.white)),
+            Spacer(),
+            IconButton(onPressed:() {
+              Navigator.pushNamed(context,WatchKListScreen.routeName);
+            }, icon:Icon(Icons.collections_bookmark,color:Colors.white)),
+            Spacer(),
 
+          ],
+
+        ),
+      ),
 
     );
   }
