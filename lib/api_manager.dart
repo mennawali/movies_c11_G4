@@ -4,7 +4,9 @@ import 'package:movies_app_c11/PopularMovies.dart';
 import 'package:movies_app_c11/UpComing_Movies.dart';
 import 'package:movies_app_c11/TopRated.dart';
 import 'package:movies_app_c11/BrowseCategory.dart';
-import 'package:movies_app_c11/MoviesOfCategory.dart'; // Import the MoviesOfCategory class
+import 'package:movies_app_c11/MoviesOfCategory.dart';
+import 'package:movies_app_c11/MovieDetails.dart';
+
 
 class ApiManager {
   static Future<PopularMovies> getPopularMovies() async {
@@ -96,6 +98,24 @@ class ApiManager {
     } else {
       throw Exception(
           'Failed to load movies by category. Status code: ${response.statusCode}');
+    }
+  }
+
+  // New method to fetch movie details by ID
+  static Future<MovieDetails> getMovieDetails(int movieId) async {
+    Uri url = Uri.https('api.themoviedb.org', '/3/movie/$movieId', {
+      'api_key': '86199a6c3796f9c1d6a1a79fca08dea4',
+      'language': 'en-US',
+    });
+
+    http.Response response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      var json = jsonDecode(response.body);
+      return MovieDetails.fromJson(json);
+    } else {
+      throw Exception(
+          'Failed to load movie details. Status code: ${response.statusCode}');
     }
   }
 }

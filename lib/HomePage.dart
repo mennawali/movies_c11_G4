@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:movies_app_c11/Browse.dart';
+import 'package:movies_app_c11/FirebaseFunctions.dart';
+import 'package:movies_app_c11/HomeScreenDetails.dart';
 import 'package:movies_app_c11/WatchList.dart';
 import 'package:movies_app_c11/api_manager.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:movies_app_c11/movie_model_watchList.dart';
 
 class HomePage extends StatelessWidget {
   static const String routeName = 'home';
@@ -33,24 +36,27 @@ class HomePage extends StatelessWidget {
 
           return Stack(
             children: [
-              // Carousel Slider for Popular Movies
+              // CarouselSlider at the top
               Positioned(
                 top: 0,
                 left: 0,
                 right: 0,
-                child:
-                CarouselSlider.builder(
+                child: CarouselSlider.builder(
                   itemCount: popularMovies.length,
                   itemBuilder: (context, index, realIndex) {
-                    String imageUrl =
-                        "https://image.tmdb.org/t/p/w500${popularMovies[index].backdropPath ?? ''}";
+                    String imageUrl = "https://image.tmdb.org/t/p/w500${popularMovies[index].backdropPath ?? ''}";
                     String title = popularMovies[index].title ?? 'No Title';
-                    String releaseDate =
-                        popularMovies[index].releaseDate ?? 'No Release Date';
+                    String releaseDate = popularMovies[index].releaseDate ?? 'No Release Date';
 
-                    return imageUrl.isNotEmpty &&
-                        popularMovies[index].backdropPath != null
-                        ? Container(
+                    return imageUrl.isNotEmpty ? GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        MovieDetailsScreen.routeName,
+                        arguments: popularMovies[index],
+                      );
+                    },
+                        child:Container(
                       height: 300,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -62,8 +68,7 @@ class HomePage extends StatelessWidget {
                                   imageUrl,
                                   fit: BoxFit.cover,
                                   width: double.infinity,
-                                  errorBuilder:
-                                      (context, error, stackTrace) {
+                                  errorBuilder: (context, error, stackTrace) {
                                     return Center(
                                       child: Icon(
                                         Icons.broken_image,
@@ -72,35 +77,50 @@ class HomePage extends StatelessWidget {
                                     );
                                   },
                                 ),
-                                Center(child: Icon(Icons.play_circle_sharp, color: Colors.white, size: 40,)),
-                                // Display bookmark and add icons on the second movie image
+                                Center(
+                                  child: Icon(
+                                    Icons.play_circle_sharp,
+                                    color: Colors.white,
+                                    size: 40,
+                                  ),
+                                ),
                                 if (index == 1)
                                   Positioned(
                                     top: 8,
-                                    right: 8,
-                                    child: Stack(
-                                      children: [
-                                        Icon(
-                                          Icons.bookmark,
-                                          color: Colors.white12,
-                                          size: 30,
-                                        ),
-                                        Positioned(
-                                          right: 0,
-                                          child: Icon(
+                                    left: 8,
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        await FirebaseFunctions.addMovie(MovieModelWatchList(
+                                          title: title,
+                                          imageUrl: imageUrl,
+                                          releaseDate: releaseDate,
+                                          id: '', // ID will be set by Firestore
+                                        ));
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('Movie added to watchlist')),
+                                        );
+                                      },
+                                      child: Stack(
+                                        children: [
+                                          Icon(
+                                            Icons.bookmark,
+                                            color: Colors.white12,
+                                            size: 30,
+                                          ),
+                                          Icon(
                                             Icons.add,
                                             color: Colors.white,
                                             size: 20,
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                               ],
                             ),
                           ),
                           Container(
-                                padding: EdgeInsets.all(8.0),
+                            padding: EdgeInsets.all(8.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
@@ -128,8 +148,8 @@ class HomePage extends StatelessWidget {
                         ],
                       ),
                     )
-                        : Container(
-                      color: Color(0xff131313) ,
+                    ) : Container(
+                      color: Color(0xff131313),
                       child: Center(
                         child: Text(
                           'No Image Available',
@@ -151,7 +171,7 @@ class HomePage extends StatelessWidget {
 
               // PageView for Popular Movies on Top-Right
               Positioned(
-                top: 118, // Adjust this based on where you want to position the PageView
+                top: 118,
                 left: 30,
                 child: Container(
                   width: 129,
@@ -169,7 +189,7 @@ class HomePage extends StatelessWidget {
                         itemBuilder: (context, index, realIndex) {
                           String imageUrl = "https://image.tmdb.org/t/p/w500${popularMovies[index].backdropPath ?? ''}";
 
-                          return imageUrl.isNotEmpty && popularMovies[index].backdropPath != null
+                          return imageUrl.isNotEmpty
                               ? ClipRRect(
                             borderRadius: BorderRadius.circular(8),
                             child: Image.network(
@@ -202,29 +222,49 @@ class HomePage extends StatelessWidget {
                           viewportFraction: 1.0,
                         ),
                       ),
-
-                      Stack(
-                        children: [
-                          Icon(
-                            Icons.bookmark,
-                            color: Colors.white10,
+                      Positioned(
+                        top: 8,
+                        left: 8,
+                        child: GestureDetector(
+                          onTap: () async {
+                            var movie = popularMovies.isNotEmpty ? popularMovies[0] : null;
+                            if (movie != null) {
+                              await FirebaseFunctions.addMovie(MovieModelWatchList(
+                                title: movie.title ?? '',
+                                imageUrl: "https://image.tmdb.org/t/p/w500${movie.backdropPath ?? ''}",
+                                releaseDate: movie.releaseDate ?? '',
+                                id: '', // ID will be set by Firestore
+                              ));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Movie added to watchlist')),
+                              );
+                            }
+                          },
+                          child: Stack(
+                            children: [
+                              Icon(
+                                Icons.bookmark,
+                                color: Colors.white10,
+                              ),
+                              Icon(
+                                Icons.add,
+                                color: Colors.white,
+                              ),
+                            ],
                           ),
-                          Icon(
-                            Icons.add,
-                            color: Colors.white,
-                          ),
-                        ],
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
 
-              // Rest of the UI (New Releases and Top Rated Sections)
+              // Scrollable content
               Positioned(
                 top: 350, // Adjust based on the space needed for the sections
                 left: 0,
                 right: 0,
+                bottom: 0,
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
@@ -292,21 +332,36 @@ class HomePage extends StatelessWidget {
                                                   );
                                                 },
                                               ),
-                                              Stack(
-                                                children: [
-                                                  Icon(
-                                                    Icons.bookmark,
-                                                    // Change the color based on the index
-                                                    color: index == 1 ? Colors.yellow : Colors.white10,
+                                              Positioned(
+                                                top: 8,
+                                                left: 8,
+                                                child: GestureDetector(
+                                                  onTap: () async {
+                                                    var movie = upcomingMovies[index];
+                                                    await FirebaseFunctions.addMovie(MovieModelWatchList(
+                                                      title: movie.title ?? '',
+                                                      imageUrl: "https://image.tmdb.org/t/p/w500${movie.posterPath ?? ''}",
+                                                      releaseDate: movie.releaseDate ?? '',
+                                                      id: '', // ID will be set by Firestore
+                                                    ));
+                                                    ScaffoldMessenger.of(context).showSnackBar(
+                                                      SnackBar(content: Text('Movie added to watchlist')),
+                                                    );
+                                                  },
+                                                  child: Stack(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.bookmark,
+                                                        color: Colors.white10,
+                                                      ),
+                                                      Icon(
+                                                        index == 1 ? Icons.check : Icons.add,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ],
                                                   ),
-                                                  Icon(
-                                                    // Change the icon based on the index value
-                                                     index == 1 ? Icons.check: Icons.add, // Use `Icons.check` instead of `Icons.ok`
-                                                    color: Colors.white,
-                                                  ),
-                                                ],
+                                                ),
                                               ),
-
                                             ],
                                           ),
                                         ),
@@ -372,7 +427,6 @@ class HomePage extends StatelessWidget {
 
                                       return Container(
                                         width: 100,
-                                      // Adjusted width to fit better within the container
                                         margin: EdgeInsets.symmetric(horizontal: 8.0),
                                         decoration: BoxDecoration(
                                           color: Colors.grey[830], // Background color
@@ -402,17 +456,35 @@ class HomePage extends StatelessWidget {
                                                         );
                                                       },
                                                     ),
-                                                    Stack(
-                                                      children: [
-                                                        Icon(
-                                                          Icons.bookmark,
-                                                          color: Colors.white10,
+                                                    Positioned(
+                                                      top: 8,
+                                                      left: 8, // Align to the top left
+                                                      child: GestureDetector(
+                                                        onTap: () async {
+                                                          var movie = topRatedMovies[index];
+                                                          await FirebaseFunctions.addMovie(MovieModelWatchList(
+                                                            title: movie.title ?? '',
+                                                            imageUrl: "https://image.tmdb.org/t/p/w500${movie.posterPath ?? ''}",
+                                                            releaseDate: movie.releaseDate ?? '',
+                                                            id: '', // ID will be set by Firestore
+                                                          ));
+                                                          ScaffoldMessenger.of(context).showSnackBar(
+                                                            SnackBar(content: Text('Movie added to watchlist')),
+                                                          );
+                                                        },
+                                                        child: Stack(
+                                                          children: [
+                                                            Icon(
+                                                              Icons.bookmark,
+                                                              color: Colors.white10,
+                                                            ),
+                                                            Icon(
+                                                              Icons.add,
+                                                              color: Colors.white,
+                                                            ),
+                                                          ],
                                                         ),
-                                                        Icon(
-                                                          Icons.add,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ],
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -461,7 +533,6 @@ class HomePage extends StatelessWidget {
                                                     maxLines: 1,
                                                   ),
                                                   SizedBox(height: 4.0),
-
                                                 ],
                                               ),
                                             ),
@@ -481,9 +552,11 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ],
+
           );
         },
       ),
+
       bottomNavigationBar:Container(
         color:Color(0xff1a1a1a) ,
         child: Row(
