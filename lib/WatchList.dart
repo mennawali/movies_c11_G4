@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:movies_app_c11/FirebaseFunctions.dart'; // Import the FirebaseFunctions class
 
 class WatchKListScreen extends StatefulWidget {
   static const String routeName = 'watchlist';
@@ -11,21 +12,6 @@ class WatchKListScreen extends StatefulWidget {
 
 class _WatchKListScreenState extends State<WatchKListScreen> {
   final CollectionReference _movieCollection = FirebaseFirestore.instance.collection('Movies');
-
-  // Method to delete a movie from Firestore
-  Future<void> _deleteMovie(String id) async {
-    try {
-      await _movieCollection.doc(id).delete();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Movie removed from watchlist')),
-      );
-    } catch (e) {
-      print('Error deleting movie: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to remove movie')),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +74,19 @@ class _WatchKListScreenState extends State<WatchKListScreen> {
                 subtitle: Text(releaseDate, style: TextStyle(color: Colors.white)),
                 trailing: IconButton(
                   icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: () => _deleteMovie(id),
+                  onPressed: () async {
+                    try {
+                      await FirebaseFunctions.getMoviesCollection().doc(id).delete();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Movie removed from watchlist')),
+                      );
+                    } catch (e) {
+                      print('Error deleting movie: $e');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Failed to remove movie')),
+                      );
+                    }
+                  },
                 ),
               );
             },

@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:movies_app_c11/Browse.dart';
 import 'package:movies_app_c11/FirebaseFunctions.dart';
 import 'package:movies_app_c11/HomeScreenDetails.dart';
+import 'package:movies_app_c11/PopularMovies.dart';
+import 'package:movies_app_c11/TopRated.dart';
 import 'package:movies_app_c11/WatchList.dart';
 import 'package:movies_app_c11/api_manager.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:movies_app_c11/movie_model_watchList.dart';
+
 
 class HomePage extends StatelessWidget {
   static const String routeName = 'home';
@@ -48,106 +51,104 @@ class HomePage extends StatelessWidget {
                     String title = popularMovies[index].title ?? 'No Title';
                     String releaseDate = popularMovies[index].releaseDate ?? 'No Release Date';
 
+
                     return imageUrl.isNotEmpty ? GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        MovieDetailsScreen.routeName,
-                        arguments: popularMovies[index],
-                      );
-                    },
-                        child:Container(
-                      height: 300,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            child: Stack(
-                              children: [
-                                Image.network(
-                                  imageUrl,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Center(
-                                      child: Icon(
-                                        Icons.broken_image,
-                                        color: Colors.white,
-                                      ),
-                                    );
-                                  },
-                                ),
-                                Center(
-                                  child: Icon(
-                                    Icons.play_circle_sharp,
-                                    color: Colors.white,
-                                    size: 40,
+                      onTap: () {
+                        Navigator.pushNamed(
+                          context,
+                          MovieDetailsScreen.routeName,
+                          arguments: popularMovies[index].id,
+                        );
+                      },
+                      child: Container(
+                        height: 300,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: Stack(
+                                children: [
+                                  Image.network(
+                                    imageUrl,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Center(
+                                        child: Icon(
+                                          Icons.broken_image,
+                                          color: Colors.white,
+                                        ),
+                                      );
+                                    },
                                   ),
-                                ),
-                                if (index == 1)
-                                  Positioned(
-                                    top: 8,
-                                    left: 8,
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        await FirebaseFunctions.addMovie(MovieModelWatchList(
-                                          title: title,
-                                          imageUrl: imageUrl,
-                                          releaseDate: releaseDate,
-                                          id: '', // ID will be set by Firestore
-                                        ));
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text('Movie added to watchlist')),
-                                        );
-                                      },
-                                      child: Stack(
-                                        children: [
-                                          Icon(
-                                            Icons.bookmark,
-                                            color: Colors.white12,
-                                            size: 30,
-                                          ),
-                                          Icon(
-                                            Icons.add,
-                                            color: Colors.white,
-                                            size: 20,
-                                          ),
-                                        ],
-                                      ),
+                                  Center(
+                                    child: Icon(
+                                      Icons.play_circle_sharp,
+                                      color: Colors.white,
+                                      size: 40,
                                     ),
                                   ),
-                              ],
+                                  if (index == 1)
+                                    Positioned(
+                                      top: 8,
+                                      left: 8,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                              context,
+                                              MovieDetailsScreen.routeName,
+                                            arguments: popularMovies[index].id,
+                                          );
+
+                                        },
+                                        child: Stack(
+                                          children: [
+                                            Icon(
+                                              Icons.bookmark,
+                                              color: Colors.white12,
+                                              size: 30,
+                                            ),
+                                            Icon(
+                                              Icons.add,
+                                              color: Colors.white,
+                                              size: 20,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  title,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16.0,
+                            Container(
+                              padding: EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    title,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16.0,
+                                    ),
+                                    textAlign: TextAlign.right,
                                   ),
-                                  textAlign: TextAlign.right,
-                                ),
-                                SizedBox(height: 4.0),
-                                Text(
-                                  releaseDate,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14.0,
+                                  SizedBox(height: 4.0),
+                                  Text(
+                                    releaseDate,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14.0,
+                                    ),
+                                    textAlign: TextAlign.right,
                                   ),
-                                  textAlign: TextAlign.right,
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    )
                     ) : Container(
                       color: Color(0xff131313),
                       child: Center(
@@ -168,7 +169,6 @@ class HomePage extends StatelessWidget {
                   ),
                 ),
               ),
-
               // PageView for Popular Movies on Top-Right
               Positioned(
                 top: 118,
@@ -184,6 +184,7 @@ class HomePage extends StatelessWidget {
                   ),
                   child: Stack(
                     children: [
+                      // Single CarouselSlider
                       CarouselSlider.builder(
                         itemCount: popularMovies.length,
                         itemBuilder: (context, index, realIndex) {
@@ -191,16 +192,64 @@ class HomePage extends StatelessWidget {
 
                           return imageUrl.isNotEmpty
                               ? ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              imageUrl,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Icon(
-                                  Icons.broken_image,
-                                  color: Colors.white,
+                            borderRadius: BorderRadius.circular(4),
+                            child: GestureDetector(
+                              onTap: () {
+                                // Navigate to MovieDetailsScreen
+                                Navigator.pushNamed(
+                                  context,
+                                  MovieDetailsScreen.routeName,
+                                  arguments: popularMovies[index].id, // Pass movie ID
                                 );
                               },
+                              child: Stack(
+                                children: [
+                                  Image.network(
+                                    imageUrl,
+                                    fit: BoxFit.cover,
+                                    width: 129, // Ensure it fits the container width
+                                    height: 199, // Full height of the container
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Icon(
+                                        Icons.broken_image,
+                                        color: Colors.white,
+                                      );
+                                    },
+                                  ),
+                                  Positioned(
+                                    top: 8,
+                                    left: 8,
+                                    child: GestureDetector(
+                                      onTap: () async {
+                                        var movie = popularMovies[index];
+                                        if (movie != null) {
+                                          await FirebaseFunctions.addMovie(MovieModelWatchList(
+                                            title: movie.title ?? '',
+                                            imageUrl: "https://image.tmdb.org/t/p/w500${movie.backdropPath ?? ''}",
+                                            releaseDate: movie.releaseDate ?? '',
+                                            id: '', // ID will be set by Firestore
+                                          ));
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(content: Text('Movie added to watchlist')),
+                                          );
+                                        }
+                                      },
+                                      child: Stack(
+                                        children: [
+                                          Icon(
+                                            Icons.bookmark,
+                                            color: Colors.white10,
+                                          ),
+                                          Icon(
+                                            Icons.add,
+                                            color: Colors.white,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           )
                               : Container(
@@ -214,7 +263,7 @@ class HomePage extends StatelessWidget {
                           );
                         },
                         options: CarouselOptions(
-                          height: 300,
+                          height: 199, // Full height of the container
                           autoPlay: true,
                           autoPlayInterval: Duration(seconds: 3),
                           autoPlayAnimationDuration: Duration(milliseconds: 300),
@@ -222,43 +271,20 @@ class HomePage extends StatelessWidget {
                           viewportFraction: 1.0,
                         ),
                       ),
+                      // Optional: Overlay to simulate split effect
                       Positioned(
-                        top: 8,
-                        left: 8,
-                        child: GestureDetector(
-                          onTap: () async {
-                            var movie = popularMovies.isNotEmpty ? popularMovies[0] : null;
-                            if (movie != null) {
-                              await FirebaseFunctions.addMovie(MovieModelWatchList(
-                                title: movie.title ?? '',
-                                imageUrl: "https://image.tmdb.org/t/p/w500${movie.backdropPath ?? ''}",
-                                releaseDate: movie.releaseDate ?? '',
-                                id: '', // ID will be set by Firestore
-                              ));
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Movie added to watchlist')),
-                              );
-                            }
-                          },
-                          child: Stack(
-                            children: [
-                              Icon(
-                                Icons.bookmark,
-                                color: Colors.white10,
-                              ),
-                              Icon(
-                                Icons.add,
-                                color: Colors.white,
-                              ),
-                            ],
-                          ),
+                        top: 99.5, // Middle of the height
+                        left: 0,
+                        child: Container(
+                          width: 129,
+                          height: 1, // Thin line for visual separation
+                          color: Colors.grey, // Divider color
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-
               // Scrollable content
               Positioned(
                 top: 350, // Adjust based on the space needed for the sections
@@ -312,57 +338,67 @@ class HomePage extends StatelessWidget {
                                     itemBuilder: (context, index) {
                                       String imageUrl =
                                           "https://image.tmdb.org/t/p/w500${upcomingMovies[index].posterPath ?? ''}";
+                                      int movieId = upcomingMovies[index].id ?? 0;
 
                                       return Container(
                                         width: 90,
                                         margin: EdgeInsets.symmetric(horizontal: 8.0),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(8.0),
-                                          child: Stack(
-                                            children: [
-                                              Image.network(
-                                                imageUrl,
-                                                fit: BoxFit.fill,
-                                                errorBuilder: (context, error, stackTrace) {
-                                                  return Center(
-                                                    child: Icon(
-                                                      Icons.broken_image,
-                                                      color: Colors.white,
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                              Positioned(
-                                                top: 8,
-                                                left: 8,
-                                                child: GestureDetector(
-                                                  onTap: () async {
-                                                    var movie = upcomingMovies[index];
-                                                    await FirebaseFunctions.addMovie(MovieModelWatchList(
-                                                      title: movie.title ?? '',
-                                                      imageUrl: "https://image.tmdb.org/t/p/w500${movie.posterPath ?? ''}",
-                                                      releaseDate: movie.releaseDate ?? '',
-                                                      id: '', // ID will be set by Firestore
-                                                    ));
-                                                    ScaffoldMessenger.of(context).showSnackBar(
-                                                      SnackBar(content: Text('Movie added to watchlist')),
-                                                    );
-                                                  },
-                                                  child: Stack(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.bookmark,
-                                                        color: Colors.white10,
-                                                      ),
-                                                      Icon(
-                                                        index == 1 ? Icons.check : Icons.add,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                              context,
+                                              MovieDetailsScreen.routeName,
+                                              arguments: upcomingMovies[index].id,
+                                            );
+                                          },
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(8.0),
+                                            child: Stack(
+                                              children: [
+                                                Image.network(
+                                                  imageUrl,
+                                                  fit: BoxFit.fill,
+                                                  errorBuilder: (context, error, stackTrace) {
+                                                    return Center(
+                                                      child: Icon(
+                                                        Icons.broken_image,
                                                         color: Colors.white,
                                                       ),
-                                                    ],
+                                                    );
+                                                  },
+                                                ),
+                                                Positioned(
+                                                  top: 8,
+                                                  left: 8,
+                                                  child: GestureDetector(
+                                                    onTap: () async {
+                                                      var movie = upcomingMovies[index];
+                                                      await FirebaseFunctions.addMovie(MovieModelWatchList(
+                                                        title: movie.title ?? '',
+                                                        imageUrl: "https://image.tmdb.org/t/p/w500${movie.posterPath ?? ''}",
+                                                        releaseDate: movie.releaseDate ?? '',
+                                                        id: '', // ID will be set by Firestore
+                                                      ));
+                                                      ScaffoldMessenger.of(context).showSnackBar(
+                                                        SnackBar(content: Text('Movie added to watchlist')),
+                                                      );
+                                                    },
+                                                    child: Stack(
+                                                      children: [
+                                                        Icon(
+                                                          Icons.bookmark,
+                                                          color: Colors.white10,
+                                                        ),
+                                                        Icon(
+                                                          index == 1 ? Icons.check : Icons.add,
+                                                          color: Colors.white,
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       );
@@ -424,6 +460,7 @@ class HomePage extends StatelessWidget {
                                       String title = topRatedMovies[index].title ?? 'No Title';
                                       String releaseDate = topRatedMovies[index].releaseDate ?? 'No Release Date';
                                       double voteAverage = topRatedMovies[index].voteAverage ?? 0.0;
+                                      int movieId = topRatedMovies[index].id ?? 0;
 
                                       return Container(
                                         width: 100,
@@ -433,110 +470,119 @@ class HomePage extends StatelessWidget {
                                           borderRadius: BorderRadius.circular(8.0),
                                           border: Border.all(color: Colors.grey[700]!, width: 2.0), // Border color and width
                                         ),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              width: double.infinity,
-                                              height: 100,
-                                              child: ClipRRect(
-                                                borderRadius: BorderRadius.vertical(top: Radius.circular(8.0)),
-                                                child: Stack(
-                                                  children: [
-                                                    Image.network(
-                                                      imageUrl,
-                                                      fit: BoxFit.cover, // Changed to cover to fit the image better
-                                                      width: double.infinity,
-                                                      errorBuilder: (context, error, stackTrace) {
-                                                        return Center(
-                                                          child: Icon(
-                                                            Icons.broken_image,
-                                                            color: Colors.white,
-                                                          ),
-                                                        );
-                                                      },
-                                                    ),
-                                                    Positioned(
-                                                      top: 8,
-                                                      left: 8, // Align to the top left
-                                                      child: GestureDetector(
-                                                        onTap: () async {
-                                                          var movie = topRatedMovies[index];
-                                                          await FirebaseFunctions.addMovie(MovieModelWatchList(
-                                                            title: movie.title ?? '',
-                                                            imageUrl: "https://image.tmdb.org/t/p/w500${movie.posterPath ?? ''}",
-                                                            releaseDate: movie.releaseDate ?? '',
-                                                            id: '', // ID will be set by Firestore
-                                                          ));
-                                                          ScaffoldMessenger.of(context).showSnackBar(
-                                                            SnackBar(content: Text('Movie added to watchlist')),
-                                                          );
-                                                        },
-                                                        child: Stack(
-                                                          children: [
-                                                            Icon(
-                                                              Icons.bookmark,
-                                                              color: Colors.white10,
-                                                            ),
-                                                            Icon(
-                                                              Icons.add,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                              context,
+                                              MovieDetailsScreen.routeName,
+                                              arguments: topRatedMovies[index].id,
+                                            );
+                                          },
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                width: double.infinity,
+                                                height: 100,
+                                                child: ClipRRect(
+                                                  borderRadius: BorderRadius.vertical(top: Radius.circular(8.0)),
+                                                  child: Stack(
+                                                    children: [
+                                                      Image.network(
+                                                        imageUrl,
+                                                        fit: BoxFit.cover, // Changed to cover to fit the image better
+                                                        width: double.infinity,
+                                                        errorBuilder: (context, error, stackTrace) {
+                                                          return Center(
+                                                            child: Icon(
+                                                              Icons.broken_image,
                                                               color: Colors.white,
                                                             ),
-                                                          ],
-                                                        ),
+                                                          );
+                                                        },
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.star,
-                                                        color: Colors.yellow,
-                                                        size: 16.0,
-                                                      ),
-                                                      SizedBox(width: 4.0),
-                                                      Text(
-                                                        voteAverage.toStringAsFixed(1),
-                                                        style: TextStyle(
-                                                          color: Colors.white,
-                                                          fontSize: 14.0,
+                                                      Positioned(
+                                                        top: 8,
+                                                        left: 8, // Align to the top left
+                                                        child: GestureDetector(
+                                                          onTap: () async {
+                                                            var movie = topRatedMovies[index];
+                                                            await FirebaseFunctions.addMovie(MovieModelWatchList(
+                                                              title: movie.title ?? '',
+                                                              imageUrl: "https://image.tmdb.org/t/p/w500${movie.posterPath ?? ''}",
+                                                              releaseDate: movie.releaseDate ?? '',
+                                                              id: '', // ID will be set by Firestore
+                                                            ));
+                                                            ScaffoldMessenger.of(context).showSnackBar(
+                                                              SnackBar(content: Text('Movie added to watchlist')),
+                                                            );
+                                                          },
+                                                          child: Stack(
+                                                            children: [
+                                                              Icon(
+                                                                Icons.bookmark,
+                                                                color: Colors.white10,
+                                                              ),
+                                                              Icon(
+                                                                Icons.add,
+                                                                color: Colors.white,
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
                                                     ],
                                                   ),
-                                                  Text(
-                                                    title,
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontWeight: FontWeight.bold,
-                                                      fontSize: 16.0,
-                                                    ),
-                                                    overflow: TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                  ),
-                                                  SizedBox(height: 4.0),
-                                                  Text(
-                                                    releaseDate,
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14.0,
-                                                    ),
-                                                    overflow: TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                  ),
-                                                  SizedBox(height: 4.0),
-                                                ],
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                              Padding(
+                                                padding: const EdgeInsets.all(8.0),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Icon(
+                                                          Icons.star,
+                                                          color: Colors.yellow,
+                                                          size: 16.0,
+                                                        ),
+                                                        SizedBox(width: 4.0),
+                                                        Text(
+                                                          voteAverage.toStringAsFixed(1),
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 14.0,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Text(
+                                                      title,
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 16.0,
+                                                      ),
+                                                      overflow: TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                    ),
+                                                    SizedBox(height: 4.0),
+                                                    Text(
+                                                      releaseDate,
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14.0,
+                                                      ),
+                                                      overflow: TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                    ),
+                                                    SizedBox(height: 4.0),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       );
                                     },
@@ -552,41 +598,46 @@ class HomePage extends StatelessWidget {
                 ),
               ),
             ],
-
           );
         },
       ),
 
-      bottomNavigationBar:Container(
-        color:Color(0xff1a1a1a) ,
+      bottomNavigationBar: Container(
+        color: Color(0xff1a1a1a),
         child: Row(
           children: [
             Spacer(),
             IconButton(
-                onPressed:() {
-                  Navigator.pushNamed(context,HomePage.routeName);
-                }, icon:Icon(Icons.home_sharp,
-              color: Colors.white,
-            )),
+              onPressed: () {
+                Navigator.pushNamed(context, HomePage.routeName);
+              },
+              icon: Icon(Icons.home_sharp, color: Colors.white),
+            ),
             Spacer(),
-            IconButton(onPressed:() {
-              Navigator.pushNamed(context, '');
-            }, icon:Icon(Icons.search,color:Colors.white)),
+            IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '');
+              },
+              icon: Icon(Icons.search, color: Colors.white),
+            ),
             Spacer(),
-            IconButton(onPressed:() {
-              Navigator.pushNamed(context,Browse.routeName);
-            }, icon:Icon(Icons.movie_creation,color:Colors.white)),
+            IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, Browse.routeName);
+              },
+              icon: Icon(Icons.movie_creation, color: Colors.white),
+            ),
             Spacer(),
-            IconButton(onPressed:() {
-              Navigator.pushNamed(context,WatchKListScreen.routeName);
-            }, icon:Icon(Icons.collections_bookmark,color:Colors.white)),
+            IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, WatchKListScreen.routeName);
+              },
+              icon: Icon(Icons.collections_bookmark, color: Colors.white),
+            ),
             Spacer(),
-
           ],
-
         ),
       ),
-
     );
   }
 }
