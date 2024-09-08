@@ -1,12 +1,13 @@
-class Top_Rated {
+class MoviesOfCategory {
   int? page;
   List<Results>? results;
   int? totalPages;
   int? totalResults;
 
-  Top_Rated({this.page, this.results, this.totalPages, this.totalResults});
+  MoviesOfCategory(
+      {this.page, this.results, this.totalPages, this.totalResults});
 
-  Top_Rated.fromJson(Map<String, dynamic> json) {
+  MoviesOfCategory.fromJson(Map<String, dynamic> json) {
     page = json['page'];
     if (json['results'] != null) {
       results = <Results>[];
@@ -17,7 +18,6 @@ class Top_Rated {
     totalPages = json['total_pages'];
     totalResults = json['total_results'];
   }
-
 }
 
 class Results {
@@ -68,6 +68,4 @@ class Results {
     voteAverage = json['vote_average'];
     voteCount = json['vote_count'];
   }
-
-
 }

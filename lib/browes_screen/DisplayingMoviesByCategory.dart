@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:movies_app_c11/api_manager.dart'; // Import ApiManager
-import 'package:movies_app_c11/MoviesOfCategory.dart'; // Import MoviesOfCategory class
+import 'package:movies_app_c11/AppColors.dart';
+import 'package:movies_app_c11/api_manager.dart';
+import 'package:movies_app_c11/browes_screen/MoviesOfCategory.dart';
 
 class MoviesByCategoryScreen extends StatefulWidget {
   final int categoryId;
 
-  MoviesByCategoryScreen({required this.categoryId, Key? key}) : super(key: key);
+  MoviesByCategoryScreen({required this.categoryId, Key? key})
+      : super(key: key);
 
   @override
   _MoviesByCategoryScreenState createState() => _MoviesByCategoryScreenState();
@@ -25,9 +27,8 @@ class _MoviesByCategoryScreenState extends State<MoviesByCategoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Movies'),
-        backgroundColor: Colors.transparent,
       ),
-      backgroundColor: Color(0xff131313),
+      backgroundColor: Appcolors.primary,
       body: FutureBuilder<MoviesOfCategory>(
         future: _moviesOfCategoryFuture,
         builder: (context, snapshot) {
@@ -48,7 +49,8 @@ class _MoviesByCategoryScreenState extends State<MoviesByCategoryScreen> {
               itemCount: snapshot.data!.results!.length,
               itemBuilder: (context, index) {
                 var movie = snapshot.data!.results![index];
-                String posterUrl = 'https://image.tmdb.org/t/p/w500${movie.posterPath}';
+                String posterUrl =
+                    'https://image.tmdb.org/t/p/w500${movie.posterPath}';
 
                 return GridTile(
                   child: Container(
@@ -60,14 +62,8 @@ class _MoviesByCategoryScreenState extends State<MoviesByCategoryScreen> {
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: Center(
-                      child: Text(
-                        movie.title ?? '',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0,
-                        ),
-                      ),
+                      child: Text(movie.title ?? '',
+                          style: Theme.of(context).textTheme.titleMedium),
                     ),
                   ),
                 );

@@ -1,12 +1,19 @@
-class SimilarMovies {
+class UpComing_Movies {
+  Dates? dates;
   int? page;
   List<Results>? results;
   int? totalPages;
   int? totalResults;
 
-  SimilarMovies({this.page, this.results, this.totalPages, this.totalResults});
+  UpComing_Movies(
+      {this.dates,
+        this.page,
+        this.results,
+        this.totalPages,
+        this.totalResults});
 
-  SimilarMovies.fromJson(Map<String, dynamic> json) {
+  UpComing_Movies.fromJson(Map<String, dynamic> json) {
+    dates = json['dates'] != null ? new Dates.fromJson(json['dates']) : null;
     page = json['page'];
     if (json['results'] != null) {
       results = <Results>[];
@@ -17,16 +24,17 @@ class SimilarMovies {
     totalPages = json['total_pages'];
     totalResults = json['total_results'];
   }
+}
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['page'] = this.page;
-    if (this.results != null) {
-      data['results'] = this.results!.map((v) => v.toJson()).toList();
-    }
-    data['total_pages'] = this.totalPages;
-    data['total_results'] = this.totalResults;
-    return data;
+class Dates {
+  String? maximum;
+  String? minimum;
+
+  Dates({this.maximum, this.minimum});
+
+  Dates.fromJson(Map<String, dynamic> json) {
+    maximum = json['maximum'];
+    minimum = json['minimum'];
   }
 }
 

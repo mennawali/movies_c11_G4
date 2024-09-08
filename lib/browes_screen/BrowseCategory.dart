@@ -11,8 +11,6 @@ class BrowseCategory {
       });
     }
   }
-
-
 }
 
 class Genres {
@@ -25,6 +23,4 @@ class Genres {
     id = json['id'];
     name = json['name'];
   }
-
-
 }

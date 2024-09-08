@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:movies_app_c11/api_manager.dart';
-import 'package:movies_app_c11/movie_model_watchList.dart';
+import 'package:movies_app_c11/watch_list/whatch_list_model.dart';
 
 class FirebaseFunctions {
   // Get a reference to the movies collection
   static CollectionReference<MovieModelWatchList> getMoviesCollection() {
-    return FirebaseFirestore.instance.collection('Movies').withConverter<MovieModelWatchList>(
+    return FirebaseFirestore.instance
+        .collection('Movies')
+        .withConverter<MovieModelWatchList>(
       fromFirestore: (snapshot, _) {
         return MovieModelWatchList.fromJson(snapshot.data()!);
       },

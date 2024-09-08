@@ -17,8 +17,6 @@ class PopularMovies {
     totalPages = json['total_pages'];
     totalResults = json['total_results'];
   }
-
-
 }
 
 class Results {
@@ -69,5 +67,4 @@ class Results {
     voteAverage = json['vote_average'];
     voteCount = json['vote_count'];
   }
-
 }
